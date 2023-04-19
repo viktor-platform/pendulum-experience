@@ -103,6 +103,7 @@ and even apply moon gravity!
     doubleStep.lb4 = LineBreak()
     doubleStep.gravity = BooleanField(
         "Moon Gravity (1.62 m/s^2)",
+        default=False,
         flex=50,
     )
 
@@ -500,7 +501,3 @@ class Controller(ViktorController):
         ani_a.save('scatter.gif', writer="Imagemagick")
         path = Path(__file__).parent/f"scatter.gif"
         return ImageResult(File.from_path(path))
-
-           
-    
-    
