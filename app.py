@@ -107,7 +107,6 @@ and even apply moon gravity!
         flex=50,
     )
 
-
 class Controller(ViktorController):
     label = 'My Entity Type'
     parametrization = Parametrization
@@ -200,7 +199,6 @@ class Controller(ViktorController):
         x1 = ya.value
         y1 = np.zeros(len(model.time))
 
-        #suppose that l = 1
         x2 = 1*np.sin(theta_a.value)+x1
         x2b = 1.05*np.sin(theta_a.value)+x1
         y2 = 1*np.cos(theta_a.value)-y1
@@ -356,7 +354,6 @@ class Controller(ViktorController):
 
         m.time = np.multiply(TF, m.time)
 
-        #Plotting the results
         plt.close('all')
 
         fig1 = plt.figure()
@@ -472,8 +469,6 @@ class Controller(ViktorController):
 
         time_template = 'time = %.1fs'
         time_text = ax.text(0.05,0.9,'',transform=ax.transAxes)
-        #start_text = ax.text(-1.1,-0.3,'start',ha='right')
-        #end_text = ax.text(1.0,-0.3,'end',ha='left')
 
         def init():
             mass1.set_data([],[])
@@ -495,9 +490,10 @@ class Controller(ViktorController):
 
         ani_a = animation.FuncAnimation(fig, animate, \
                 np.arange(len(m.time)), \
-                interval=40,init_func=init) #blit=False,
+                interval=40,init_func=init) 
         
         plt.plot()
         ani_a.save('scatter.gif', writer="Imagemagick")
         path = Path(__file__).parent/f"scatter.gif"
         return ImageResult(File.from_path(path))
+    
