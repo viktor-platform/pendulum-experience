@@ -17,6 +17,7 @@ from viktor.views import (
 )
 
 import matplotlib.animation as animation
+from tempfile import NamedTemporaryFile
 import matplotlib.pyplot as plt
 from gekko import GEKKO
 import numpy as np
@@ -42,7 +43,7 @@ In the first part of this app, we look at how a state space system can be used t
 reach an objective position for a single pendulum. As a user, you may change the weight and 
 target time for the pendulum to reach the objective. 
 In the second part of the pendulum experience, the challenge is to balance 
-a double pendulum upright! Enjoy!
+a double pendulum upright! The code is inspired by the work of John Hedengren. Enjoy!
 
         """
     )
@@ -97,6 +98,7 @@ and even apply moon gravity!
         min=-1.5,
         max=1.5,
         step=0.1,
+        default=0.0,
         flex=50,
     )
 
@@ -246,8 +248,10 @@ class Controller(ViktorController):
                 interval=40,blit=False,init_func=init)
         
         plt.plot()
-        ani_a.save('scatter.gif', writer="Imagemagick")
-        path = Path(__file__).parent/f"scatter.gif"
+        tempFile = NamedTemporaryFile(suffix='.gif', delete=False, mode='wb')
+        ani_a.save(tempFile.name, writer='imagemagick')
+        tempFile.close()
+        path = Path(tempFile.name)
         return ImageResult(File.from_path(path))
     
 
@@ -493,7 +497,9 @@ class Controller(ViktorController):
                 interval=40,init_func=init) 
         
         plt.plot()
-        ani_a.save('scatter.gif', writer="Imagemagick")
-        path = Path(__file__).parent/f"scatter.gif"
+        tempFile = NamedTemporaryFile(suffix='.gif', delete=False, mode='wb')
+        ani_a.save(tempFile.name, writer='imagemagick')
+        tempFile.close()
+        path = Path(tempFile.name)
         return ImageResult(File.from_path(path))
     
