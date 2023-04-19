@@ -1,5 +1,8 @@
 from viktor import ViktorController
-from viktor.core import File
+from viktor.core import (
+    progress_message,
+    File,
+)
 
 from viktor.parametrization import (
     ViktorParametrization,
@@ -134,7 +137,7 @@ class Controller(ViktorController):
 
         #MV
         ua = model.Var(value=0)
-
+        progress_message(message='building state space model...')
         #State Variables
         theta_a = model.Var(value=0)
         qa = model.Var(value=0)
@@ -150,6 +153,9 @@ class Controller(ViktorController):
         
         #Definine the Objectives
         #Make all the state variables be zero at time >= 6.2
+
+        progress_message(message='Defining objective equations...')
+
         model.Obj(final*ya**2)
         model.Obj(final*va**2)
         model.Obj(final*theta_a**2)
@@ -166,38 +172,6 @@ class Controller(ViktorController):
         model.solve() #(disp=False)
 
         plt.figure(figsize=(12,10))
-
-        plt.subplot(221)
-        plt.plot(model.time,ua.value,'m',lw=2)
-        plt.legend([r'$u$'],loc=1)
-        plt.ylabel('Force')
-        plt.xlabel('Time')
-        plt.xlim(model.time[0],model.time[-1])
-
-        plt.subplot(222)
-        plt.plot(model.time,va.value,'g',lw=2)
-        plt.legend([r'$v$'],loc=1)
-        plt.ylabel('Velocity')
-        plt.xlabel('Time')
-        plt.xlim(model.time[0],model.time[-1])
-
-        plt.subplot(223)
-        plt.plot(model.time,ya.value,'r',lw=2)
-        plt.legend([r'$y$'],loc=1)
-        plt.ylabel('Position')
-        plt.xlabel('Time')
-        plt.xlim(model.time[0],model.time[-1])
-
-        plt.subplot(224)
-        plt.plot(model.time,theta_a.value,'y',lw=2)
-        plt.plot(model.time,qa.value,'c',lw=2)
-        plt.legend([r'$\theta$',r'$q$'],loc=1)
-        plt.ylabel('Angle')
-        plt.xlabel('Time')
-        plt.xlim(model.time[0],model.time[-1])
-
-        plt.rcParams['animation.html'] = 'html5'
-
         x1 = ya.value
         y1 = np.zeros(len(model.time))
 
@@ -243,11 +217,15 @@ class Controller(ViktorController):
             time_text.set_text(time_template % model.time[i])
             return line, mass1, mass2, time_text
 
+        progress_message(message='generating the results...')
+
         ani_a = animation.FuncAnimation(fig, animate, \
                 np.arange(1,len(model.time)), \
                 interval=40,blit=False,init_func=init)
         
         plt.plot()
+        progress_message(message='generating visualisation...')
+
         tempFile = NamedTemporaryFile(suffix='.gif', delete=False, mode='wb')
         ani_a.save(tempFile.name, writer='imagemagick')
         tempFile.close()
@@ -287,6 +265,8 @@ class Controller(ViktorController):
         final = m.Param(value=final)
 
         #Parameters
+        progress_message(message='building state space model...')
+
         mc = m.Param(value=1) #cart mass
         m1 = m.Param(value=params.doubleStep.massOne*0.002) #link 1 mass
         m2 = m.Param(value=params.doubleStep.massTwo*0.002) #link 2 mass
@@ -336,6 +316,8 @@ class Controller(ViktorController):
         b = np.array([xdot.dt()/TF, q1dot.dt()/TF, q2dot.dt()/TF])
         Mb = M@b
 
+        progress_message(message='Defining equations...')
+
         #Defining the State Space Model
         m.Equations([(Mb[i] == U[i] - CDQ[i] - G[i]) for i in range(3)])
         m.Equation(x.dt()/TF == xdot)
@@ -359,79 +341,7 @@ class Controller(ViktorController):
         m.time = np.multiply(TF, m.time)
 
         plt.close('all')
-
-        fig1 = plt.figure()
-        fig2 = plt.figure()
-        ax1 = fig1.add_subplot()
-        ax2 = fig2.add_subplot(321)
-        ax3 = fig2.add_subplot(322)
-        ax4 = fig2.add_subplot(323)
-        ax5 = fig2.add_subplot(324)
-        ax6 = fig2.add_subplot(325)
-        ax7 = fig2.add_subplot(326)
-
-        ax1.plot(m.time,u.value,'m',lw=2)
-        ax1.legend([r'$u$'],loc=1)
-        ax1.set_title('Control Input')
-        ax1.set_ylabel('Force (N)')
-        ax1.set_xlabel('Time (s)')
-        ax1.set_xlim(m.time[0],m.time[-1])
-        ax1.grid(True)
-
-        ax2.plot(m.time,x.value,'r',lw=2)
-        ax2.set_ylabel('Position (m)')
-        ax2.set_xlabel('Time (s)')
-        ax2.legend([r'$x$'],loc='upper left')
-        ax2.set_xlim(m.time[0],m.time[-1])
-        ax2.grid(True)
-        ax2.set_title('Cart Position')
-
-        ax3.plot(m.time,xdot.value,'g',lw=2)
-        ax3.set_ylabel('Velocity (m/s)')
-        ax3.set_xlabel('Time (s)')
-        ax3.legend([r'$xdot$'],loc='upper left')
-        ax3.set_xlim(m.time[0],m.time[-1])
-        ax3.grid(True)
-        ax3.set_title('Cart Velocity')
-
-        q1alt  = np.zeros((N,1)); q2alt  = np.zeros((N,1));
-        for i in range(N):
-            q1alt[i] = q1.value[i] + math.pi/2
-            q2alt[i] = q2.value[i] + math.pi/2
-
-        ax4.plot(m.time,q1alt,'r',lw=2)
-        ax4.set_ylabel('Angle (Rad)')
-        ax4.set_xlabel('Time (s)')
-        ax4.legend([r'$q1$'],loc='upper left')
-        ax4.set_xlim(m.time[0],m.time[-1])
-        ax4.grid(True)
-        ax4.set_title('Link 1 Position')
-
-        ax5.plot(m.time,q1dot.value,'g',lw=2)
-        ax5.set_ylabel('Angular Velocity (Rad/s)')
-        ax5.set_xlabel('Time (s)')
-        ax5.legend([r'$q1dot$'],loc='upper right')
-        ax5.set_xlim(m.time[0],m.time[-1])
-        ax5.grid(True)
-        ax5.set_title('Link 1 Velocity')
-
-        ax6.plot(m.time,q2alt,'r',lw=2)
-        ax6.set_ylabel('Angle (Rad)')
-        ax6.set_xlabel('Time (s)')
-        ax6.legend([r'$q2$'],loc='upper left')
-        ax6.set_xlim(m.time[0],m.time[-1])
-        ax6.grid(True)
-        ax6.set_title('Link 2 Position')
-
-        ax7.plot(m.time,q2dot.value,'g',lw=2)
-        ax7.set_ylabel('Angular Velocity (Rad/s)')
-        ax7.set_xlabel('Time (s)')
-        ax7.legend([r'$q2dot$'],loc='upper right')
-        ax7.set_xlim(m.time[0],m.time[-1])
-        ax7.grid(True)
-        ax7.set_title('Link 2 Velocity')
-
-        plt.rcParams['animation.html'] = 'html5'
+        progress_message(message='generating the results...')
 
         x1 = x.value
         y1 = np.zeros(len(m.time))
@@ -491,14 +401,14 @@ class Controller(ViktorController):
             line23.set_data([x2[i],x3[i]],[y2[i],y3[i]])
             time_text.set_text(time_template % m.time[i])
             return line12, line23, mass1, mass2, mass3, time_text
+        progress_message(message='generating visualisation...')
 
         ani_a = animation.FuncAnimation(fig, animate, \
                 np.arange(len(m.time)), \
                 interval=40,init_func=init) 
         
-        plt.plot()
         tempFile = NamedTemporaryFile(suffix='.gif', delete=False, mode='wb')
-        ani_a.save(tempFile.name, writer='imagemagick')
+        ani_a.save(tempFile.name, writer='Pillow')
         tempFile.close()
         path = Path(tempFile.name)
         return ImageResult(File.from_path(path))
