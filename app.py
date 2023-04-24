@@ -69,8 +69,16 @@ a double pendulum upright as fast as possible.
         flex=50,
     )
 
+    singleStep.text2 = Text(
+        """
+## About this app
+The app is inspired and based on the code of  [Prof John Hedengren](https://www.linkedin.com/in/hedengren/) and the [Gekko Optimisation Suit](https://gekko.readthedocs.io/en/latest/).
+The user interface is built in [VIKTOR](https://www.viktor.ai/) and the github repository can be found [here.](https://github.com/viktor-platform/pendulum-experience) 
+        """
+    )
+
     doubleStep = Step("Double Pendulum", views=['doublePendulum'])
-    doubleStep.text2 = Text(
+    doubleStep.text3 = Text(
         """
 # Double Pendulum
 In this part of the app, you can change the weights, choose an end location
@@ -110,11 +118,11 @@ and even apply moon gravity!
         flex=50,
     )
 
-    doubleStep.text3 = Text(
+    doubleStep.text4 = Text(
         """
 ## About this app
 The app is inspired and based on the code of  [Prof John Hedengren](https://www.linkedin.com/in/hedengren/) and the [Gekko Optimisation Suit](https://gekko.readthedocs.io/en/latest/).
-The user interface is built in VIKTOR and the github repository can be found [here.](https://github.com/viktor-platform/pendulum-experience) 
+The user interface is built in [VIKTOR](https://www.viktor.ai/) and the github repository can be found [here.](https://github.com/viktor-platform/pendulum-experience) 
         """
     )
 
