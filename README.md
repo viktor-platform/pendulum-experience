@@ -1,5 +1,5 @@
 # pendulum-experience
-![](https://github.com/viktor-platform/pendulum-experience/PendulumExperience2.gif)
+![](https://github.com/viktor-platform/pendulum-experience/blob/main/PendulumExperience2.gif)
 
 ## About this app
 The pendulum experience is an application made on the [VIKTOR Platform](https://www.viktor.ai/) in order to teach system engineers about state space models. 
