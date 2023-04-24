@@ -42,12 +42,10 @@ class Parametrization(ViktorParametrization):
         """
 ## Welcome to the Pendulum Experience!
 
-In the first part of this app, we look at how a state space system can be used to 
-reach an objective position for a single pendulum. As a user, you may change the weight and 
-target time for the pendulum to reach the objective. 
+In this app, two examples of state-space control systems are displayed. As a user, you may change the weight and 
+target time for the pendulum to reach the objective.  
 In the second part of the pendulum experience, the challenge is to balance 
-a double pendulum upright! The code is inspired by the work of John Hedengren. Enjoy!
-
+a double pendulum upright as fast as possible. 
         """
     )
 
@@ -110,6 +108,14 @@ and even apply moon gravity!
         "Moon Gravity (1.62 m/s^2)",
         default=False,
         flex=50,
+    )
+
+    doubleStep.text3 = Text(
+        """
+## About this app
+The app is inspired and based on the code of  [Prof John Hedengren](https://www.linkedin.com/in/hedengren/) and the [Gekko Optimisation Suit](https://gekko.readthedocs.io/en/latest/).
+The user interface is built in VIKTOR and the github repository can be found [here.](https://github.com/viktor-platform/pendulum-experience) 
+        """
     )
 
 class Controller(ViktorController):
@@ -221,7 +227,7 @@ class Controller(ViktorController):
 
         ani_a = animation.FuncAnimation(fig, animate, \
                 np.arange(1,len(model.time)), \
-                interval=40,blit=False,init_func=init)
+                interval=83,blit=False,init_func=init)
         
         plt.plot()
         progress_message(message='generating visualisation...')
@@ -358,7 +364,7 @@ class Controller(ViktorController):
 
         fig = plt.figure(figsize=(8,6.4))
         ax = fig.add_subplot(111,autoscale_on=False,\
-                            xlim=(-2.5,2.5),ylim=(-1.25,1.25))
+                            xlim=(-2.5,2.5),ylim=(-2.5,2.5))
         ax.set_xlabel('position')
         ax.get_yaxis().set_visible(False)
 
@@ -405,7 +411,7 @@ class Controller(ViktorController):
 
         ani_a = animation.FuncAnimation(fig, animate, \
                 np.arange(len(m.time)), \
-                interval=40,init_func=init) 
+                interval=83,init_func=init) 
         
         tempFile = NamedTemporaryFile(suffix='.gif', delete=False, mode='wb')
         ani_a.save(tempFile.name, writer='Pillow')
