@@ -17,6 +17,9 @@ from pathlib import Path
 from viktor.views import (
     ImageResult,
     ImageView,
+    WebResult,
+    WebView,
+
 )
 
 import matplotlib.animation as animation
@@ -37,7 +40,7 @@ def moonGrav(params, **kwargs):
 
 
 class Parametrization(ViktorParametrization):
-    singleStep = Step("Single Pendulum", views=['singlePendulum'])
+    singleStep = Step("Single Pendulum", views=['singlePendulum',  "whats_next"])
     singleStep.text1 = Text(
         """
 ## Welcome to the Pendulum Experience!
@@ -77,7 +80,7 @@ The user interface is built in [VIKTOR](https://www.viktor.ai/) and the github r
         """
     )
 
-    doubleStep = Step("Double Pendulum", views=['doublePendulum'])
+    doubleStep = Step("Double Pendulum", views=['doublePendulum', "whats_next"])
     doubleStep.text3 = Text(
         """
 # Double Pendulum
@@ -426,4 +429,12 @@ class Controller(ViktorController):
         tempFile.close()
         path = Path(tempFile.name)
         return ImageResult(File.from_path(path))
+    
+    @WebView("What's next?", duration_guess=1)
+    def whats_next(self, params, **kwargs):
+        """Initiates the process of rendering the "What's next" tab."""
+        html_path = Path(__file__).parent / "next_step.html"
+        with html_path.open(encoding="utf-8") as _file:
+            html_string = _file.read()
+        return WebResult(html=html_string)
     
