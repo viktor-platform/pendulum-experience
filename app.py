@@ -241,7 +241,7 @@ class Controller(ViktorController):
                 interval=83,blit=False,init_func=init)
         
         plt.plot()
-        progress_message(message='generating visualisation...')
+        progress_message(message='performing dynamic calculations.....')
 
         tempFile = NamedTemporaryFile(suffix='.gif', delete=False, mode='wb')
         ani_a.save(tempFile.name, writer='imagemagick')
